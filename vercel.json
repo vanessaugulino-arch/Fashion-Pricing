@@ -1,3 +1,3 @@
 {
-  "buildCommand": "cd $(git rev-parse --show-toplevel) && pnpm install && pnpm --filter @workspace/tfo-pricing run build && mkdir -p artifacts/tfo-pricing/.vercel/output/static && cp -r artifacts/tfo-pricing/dist/. artifacts/tfo-pricing/.vercel/output/static/ && echo '{\"version\":3,\"routes\":[{\"handle\":\"filesystem\"},{\"src\":\"/(.*)\",\"dest\":\"/index.html\"}]}' > artifacts/tfo-pricing/.vercel/output/config.json"
+  "buildCommand": "cd $(git rev-parse --show-toplevel) && bash scripts/vercel-build.sh"
 }
