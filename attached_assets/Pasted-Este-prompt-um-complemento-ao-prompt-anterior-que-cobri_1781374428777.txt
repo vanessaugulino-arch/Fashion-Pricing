@@ -1,0 +1,159 @@
+Este prompt é um complemento ao prompt anterior (que cobria Flow B).
+Ele cobre as conexões entre os flows A, B e D através do store compartilhado.
+Execute uma fase por vez e aguarde confirmação.
+
+════════════════════════════════════════════
+FASE 0 — Verificar se o store já foi atualizado (pré-requisito)
+════════════════════════════════════════════
+
+Abra useToolStore.ts e verifique se já existe o campo `perfilMarca`.
+Se existir: me mostre o trecho e pule para a Fase 2.
+Se não existir: execute a Fase 1 agora.
+
+════════════════════════════════════════════
+FASE 1 — Adicionar perfilMarca ao store (useToolStore.ts)
+════════════════════════════════════════════
+
+Adicione ao store:
+  perfilMarca: 'acesso' | 'medio' | 'premium' | 'premium_luxo' | ''
+  Valor inicial: ''
+  Ação: setPerfilMarca(perfil: 'acesso' | 'medio' | 'premium' | 'premium_luxo' | '') => void
+
+Importe o tipo TierKey de @/screens/FlowD/engine (ele já existe lá).
+Reutilize-o: `perfilMarca: TierKey | ''`
+
+Mostre o trecho atual do store antes de editar.
+
+════════════════════════════════════════════
+FASE 2 — Salvar o tier no store quando Flow D é concluído (FlowDScreen.tsx)
+════════════════════════════════════════════
+
+Arquivo: FlowDScreen.tsx
+Local: função `handleStep3Complete` — é onde o step transiciona para 'calibracao'
+ou 'resultado'.
+
+2a. Adicione ao destructuring do useToolStore:
+  const { setActiveFlow, updateFlowA, setPrecoSugeridoD, setPerfilMarca } = useToolStore();
+
+2b. Na função `handleStep3Complete`, ANTES de chamar goToStep, calcule e salve o tier:
+
+  import { calcularScoreTotal, scoreTier } from './engine'; // já importado
+
+  const handleStep3Complete = () => {
+    // Salvar perfil no store global
+    const totalScore = calcularScoreTotal(data.scores, data.concorrentes);
+    const tier = scoreTier(totalScore);
+    setPerfilMarca(tier);
+
+    // lógica existente continua igual abaixo
+    const notasAltas = Object.values(data.scores).filter(n => n >= 4).length;
+    if (notasAltas >= 8) {
+      goToStep('calibracao');
+    } else {
+      goToStep('resultado');
+    }
+  };
+
+Regra: não altere mais nada em FlowDScreen.tsx nesta fase.
+
+════════════════════════════════════════════
+FASE 3 — Flow B: ler perfilMarca do store e pré-preencher (FlowBScreen.tsx)
+════════════════════════════════════════════
+
+Esta fase complementa o prompt anterior de Flow B.
+Se o prompt anterior já adicionou o selector de perfil em Step 1,
+ajuste-o para a seguinte lógica. Se ainda não foi feito, implemente agora.
+
+3a. No destructuring do useToolStore em FlowBScreen, adicione:
+  const { ..., perfilMarca: perfilMarcaStore, setPerfilMarca } = useToolStore();
+
+3b. O estado local de perfil deve iniciar com o valor do store:
+  const [perfilMarca, setPerfilMarcaLocal] = useState(perfilMarcaStore || '');
+
+  Quando o usuário selecionar um perfil localmente, atualize também o store:
+  const handleSetPerfil = (p: string) => {
+    setPerfilMarcaLocal(p);
+    setPerfilMarca(p as any);
+  };
+
+3c. Se perfilMarcaStore já tiver um valor (o usuário fez o Flow D antes),
+  mostre um banner informativo ACIMA do selector de perfil:
+
+  Fundo: #ECFDF5, borda: #A7F3D0, texto 12px cor #065F46:
+  "✓ Perfil identificado pelo diagnóstico de valor: [label do perfil]
+   Você pode mantê-lo ou alterar abaixo."
+
+  O selector continua visível e editável em qualquer caso.
+
+Mostre o trecho atual relevante de FlowBScreen.tsx antes de editar.
+
+════════════════════════════════════════════
+FASE 4 — Flow A: usar perfil do store no benchmark (FlowAResult.tsx)
+════════════════════════════════════════════
+
+Arquivo: FlowAResult.tsx
+
+4a. Adicione ao destructuring do useToolStore:
+  const { setActiveFlow, salvarProduto, perfilMarca } = useToolStore();
+
+4b. Localize o trecho onde benchEntry é definido (por volta da linha 31):
+  const benchEntry = (BENCHMARK_MARGEM_BRUTA[segmento] ?? BENCHMARK_MARGEM_BRUTA['default'])
+  const [minRef, maxRef] = benchEntry[canal];
+
+  APÓS essa linha, adicione um ajuste de referência baseado no perfil:
+
+  // Ajuste de referência por perfil (se disponível)
+  const PERFIL_AJUSTE: Record<string, { deltaMin: number; deltaMax: number; label: string }> = {
+    acesso:       { deltaMin: -5,  deltaMax: -5,  label: 'Acesso' },
+    medio:        { deltaMin:  0,  deltaMax:  0,  label: 'Médio' },
+    premium:      { deltaMin:  5,  deltaMax:  8,  label: 'Premium' },
+    premium_luxo: { deltaMin: 10,  deltaMax: 15,  label: 'Premium / Luxo' },
+  };
+
+  const ajuste = perfilMarca ? (PERFIL_AJUSTE[perfilMarca] ?? null) : null;
+  const minRefFinal = ajuste ? Math.min(minRef + ajuste.deltaMin, 95) : minRef;
+  const maxRefFinal = ajuste ? Math.min(maxRef + ajuste.deltaMax, 98) : maxRef;
+
+  Substitua todas as referências a `minRef` e `maxRef` no restante do componente
+  por `minRefFinal` e `maxRefFinal`.
+
+4c. Na seção que exibe a referência de mercado (onde aparece "Ref: X–Y%"),
+  se `perfilMarca` estiver preenchido, acrescente o label do perfil:
+    "Ref. mercado: {minRefFinal}–{maxRefFinal}% · Perfil {ajuste.label}"
+  Se não estiver preenchido, mantenha o texto atual.
+
+4d. Abaixo do badge de status (Acima/Dentro/Abaixo da média), se `perfilMarca`
+  estiver vazio, adicione uma linha discreta em 11px cor gray-400:
+    "💡 Faça o diagnóstico de posicionamento para refinar este benchmark."
+    com um link/botão "→ Analisar posicionamento" que chame:
+    setActiveFlow('D')
+
+Regras:
+- Não altere a lógica do simulador interativo (campos editáveis de preço/custo/margem).
+- Não altere estilos fora dos pontos indicados.
+- Mostre o trecho atual antes de cada edição.
+
+════════════════════════════════════════════
+FASE 5 — Verificação de consistência entre flows
+════════════════════════════════════════════
+
+Após todas as fases anteriores, verifique:
+
+5a. Em FlowDResult.tsx, confirme que o `tier` calculado na linha
+  `const tier = scoreTier(totalScore)` usa os mesmos thresholds de
+  FlowDScreen (via calcularScoreTotal + scoreTier). Não altere nada —
+  apenas confirme e me mostre o trecho.
+
+5b. Confirme que os labels de perfil exibidos para o usuário são consistentes
+  em todos os flows:
+    'acesso'       → 'Acesso'
+    'medio'        → 'Médio'
+    'premium'      → 'Premium'
+    'premium_luxo' → 'Premium / Luxo'
+  Se algum arquivo usar label diferente (ex: 'Luxo / Premium', 'Contemporânea',
+  'Básico', 'Acessível'), atualize para os labels acima.
+  ATENÇÃO: FlowBResult.tsx tem PERFIL_LABELS com esses nomes antigos —
+  localize e atualize também.
+
+5c. Em FlowBResult.tsx, confirme que `perfilMarca` está sendo passado dentro
+  de `resultData` e desestruturado corretamente. Me mostre o trecho.

@@ -1,0 +1,108 @@
+Preciso de três alterações no FlowBResult.tsx e em @/engine/benchmarks.ts.
+Antes de cada alteração, mostre o trecho atual que você encontrou e o arquivo exato.
+Execute uma de cada vez, aguardando confirmação entre elas.
+
+──────────────────────────────────────────
+ALTERAÇÃO 1 — Adicionar card de Remarcação ao grid de métricas (FlowBResult.tsx)
+──────────────────────────────────────────
+
+Arquivo: FlowBResult.tsx
+Local: grid 2×2 atual (cards Margem Bruta, Margem Contribuição, Resultado Mensal, Markup),
+que começa logo após o comentário "Card 1: Métricas 2×2" (por volta da linha 313).
+
+O que fazer:
+- Adicionar um 5º card de "Remarcação" abaixo do grid atual (não dentro do 2×2, para não
+  quebrar o layout). O card deve aparecer apenas se `remarcacao !== null`.
+- A variável `remarcacao` já está desestruturada de `resultData`. Use-a diretamente.
+- Layout do card: mesmo padrão dos outros — fundo branco, borda, sombra. Dentro:
+    Label uppercase: "REMARCAÇÃO"
+    Valor em destaque: `{formatPercent(Math.abs(remarcacao), 0)}`
+    Subtítulo: se remarcacao < 0 → "desconto médio aplicado" | se >= 0 → "acréscimo médio"
+    Badge: use MetricBadge com benchMin={0} benchMax={remMax}  
+    (remMax já existe: `const [, remMax] = getBenchmark(BENCHMARK_REMARCACAO, segmento)`)
+
+Regras: não altere nenhum dos 4 cards existentes. Não altere estilos, layouts ou imports.
+
+──────────────────────────────────────────
+ALTERAÇÃO 2 — Banner informativo sobre o que é o resultado (FlowBResult.tsx)
+──────────────────────────────────────────
+
+Arquivo: FlowBResult.tsx
+Local: logo após o bloco do título/subtítulo/badges (após a div com os 3 badges de
+segmentoLabel, canalLabel e porteLabel, por volta da linha 309), antes do grid de métricas.
+
+O que fazer:
+Adicionar um componente de banner informativo colapsável (acordeão simples com useState),
+fechado por padrão. Quando o usuário clicar no título, ele expande.
+
+Estado: `const [showDreInfo, setShowDreInfo] = useState(false);`
+
+Estrutura do banner (fundo: #F5F0EC, borda: rgba(47,27,32,0.15), arredondado 2xl):
+
+  Linha de título clicável (sempre visível):
+    Ícone ⚠️ + texto "O que este resultado representa?" + chevron (▾ aberto / ▸ fechado)
+    Font: sans, 13px, font-semibold, cor #2F1B20
+
+  Conteúdo expandido (quando showDreInfo === true):
+    Parágrafo (12px, cor #4B3520, leading-relaxed):
+    "Esta análise mostra sua margem operacional — o resultado após pagar o custo do
+    produto, os impostos, os custos variáveis e as despesas fixas lançadas aqui.
+    Não é um DRE completo. O número só estará correto se você inserir todas as suas
+    despesas. Para o lucro líquido real, considere também juros, depreciações e
+    outras despesas financeiras."
+
+    Separador (h-px bg-gray-200 my-3)
+
+    Mini-tabela DRE (lista de itens, sem bordas externas, fonte 12px):
+      Faturamento Bruto          (cor #2F1B20, normal)
+      (–) Impostos e deduções   (cor gray-500, indent leve)
+      (–) CMV / Custo produto   (cor gray-500, indent leve)
+      (=) Lucro Bruto / MC      (cor #2F1B20, bold, fundo amarelo #F6F1AF arredondado)
+      (–) Despesas fixas e variáveis  (cor gray-500, indent leve)
+      (=) Lucro Operacional ← VOCÊ ESTÁ AQUI  (cor #065F46, bold, fundo verde #ECFDF5 arredondado)
+      (–) Outras despesas financeiras  (cor gray-400, indent leve, itálico)
+      (=) Lucro Líquido Real    (cor gray-400, itálico)
+
+Regras: use apenas useState local, sem libs extras. Não altere nada fora deste bloco.
+
+──────────────────────────────────────────
+ALTERAÇÃO 3 — Corrigir benchmark para usar dado V2 filtrado por segmento + porte
+──────────────────────────────────────────
+
+Contexto:
+O projeto tem um arquivo de benchmarking V2 na pasta /data (pode se chamar
+benchmarks_v2.ts, benchmarkData.ts, benchmarksV2.ts ou similar). Esse arquivo
+contém uma tabela com colunas: segmento, subsegmento, porte, margemBrutaMin,
+margemBrutaMedia, margemBrutaMax (e possivelmente MC). Ele foi criado mas não está
+sendo usado — o app ainda usa constantes fixas em @/engine/benchmarks.ts.
+
+Passo 1: Encontre o arquivo V2 na pasta /data e me mostre sua estrutura completa.
+
+Passo 2: Em @/engine/benchmarks.ts, crie (ou adapte) uma função:
+  `getBenchmarkV2(segmento: string, porte: string): [number, number]`
+  que receba o segmento e o porteLabel do resultado ("Microempreendedor",
+  "Pequeno negócio", "Médio negócio", "Grande negócio") e retorne [min, max]
+  de margem bruta usando os dados V2.
+
+  Regra de fallback: se não encontrar correspondência exata, use os dados do
+  mesmo segmento ignorando o porte. Se ainda assim não encontrar, use os valores
+  atuais hardcoded como fallback.
+
+Passo 3: Em FlowBResult.tsx, substitua a chamada que define benchRange
+(hoje vem de FlowBScreen.tsx via getBenchmark(BENCHMARK_MARGEM_BRUTA, segmento, ...))
+para usar getBenchmarkV2(segmento, porteLabel). O porteLabel já está disponível
+em resultData.
+
+  Exemplo de trecho a substituir em FlowBScreen (onde resultData é montado):
+    benchRange: getBenchmark(BENCHMARK_MARGEM_BRUTA, segmento, canalBenchmark)
+  Deve virar:
+    benchRange: getBenchmarkV2(segmento, porteLabel)
+
+Passo 4: Aplique o mesmo getBenchmarkV2 para o benchmark de MC em FlowBResult.tsx:
+  Linha atual: `const [mcMin, mcMax] = getBenchmark(BENCHMARK_MC, segmento, canalBenchmark);`
+  Substitua por: use V2 se disponível MC por porte, senão mantenha o fallback existente.
+
+Regras:
+- Não quebre nenhuma chamada existente de getBenchmark usada em outros flows (A, C).
+- A alteração deve ser aditiva: adicione a função nova sem remover as existentes.
+- Mostre cada arquivo antes de editar e aguarde confirmação.

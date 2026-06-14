@@ -1,0 +1,572 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "generatedAt": "2026-06-03T16:54:15.374Z",
+    "source": "Benchmarks_Varejo_Moda_Brasil.xlsx"
+  },
+  "margemBruta": {
+    "vestuario_feminino": {
+      "varejo": [
+        0.45,
+        0.8
+      ],
+      "atacado": [
+        0.22,
+        0.38
+      ]
+    },
+    "vestuario_masculino": {
+      "varejo": [
+        0.48,
+        0.75
+      ],
+      "atacado": [
+        0.2,
+        0.36
+      ]
+    },
+    "vestuario_infantil": {
+      "varejo": [
+        0.52,
+        0.77
+      ],
+      "atacado": [
+        0.22,
+        0.38
+      ]
+    },
+    "calcados_femininos": {
+      "varejo": [
+        0.45,
+        0.78
+      ],
+      "atacado": [
+        0.18,
+        0.34
+      ]
+    },
+    "calcados_masculinos": {
+      "varejo": [
+        0.43,
+        0.66
+      ],
+      "atacado": [
+        0.18,
+        0.33
+      ]
+    },
+    "calcados_infantis": {
+      "varejo": [
+        0.43,
+        0.78
+      ],
+      "atacado": [
+        0.18,
+        0.34
+      ]
+    },
+    "acessorios_bolsas_feminino": {
+      "varejo": [
+        0.55,
+        0.82
+      ],
+      "atacado": [
+        0.28,
+        0.48
+      ]
+    },
+    "acessorios_bolsas_masculino": {
+      "varejo": [
+        0.5,
+        0.7
+      ],
+      "atacado": [
+        0.28,
+        0.48
+      ]
+    },
+    "bijuterias_joias": {
+      "varejo": [
+        0.45,
+        0.8
+      ],
+      "atacado": [
+        0.35,
+        0.55
+      ]
+    },
+    "underwear_feminino": {
+      "varejo": [
+        0.52,
+        0.72
+      ],
+      "atacado": [
+        0.22,
+        0.38
+      ]
+    },
+    "underwear_masculino": {
+      "varejo": [
+        0.5,
+        0.7
+      ],
+      "atacado": [
+        0.22,
+        0.38
+      ]
+    },
+    "underwear_infantil": {
+      "varejo": [
+        0.5,
+        0.7
+      ],
+      "atacado": [
+        0.22,
+        0.38
+      ]
+    },
+    "fitness_feminino": {
+      "varejo": [
+        0.55,
+        0.78
+      ],
+      "atacado": [
+        0.25,
+        0.42
+      ]
+    },
+    "fitness_masculino": {
+      "varejo": [
+        0.52,
+        0.72
+      ],
+      "atacado": [
+        0.25,
+        0.42
+      ]
+    },
+    "fitness_infantil": {
+      "varejo": [
+        0.52,
+        0.72
+      ],
+      "atacado": [
+        0.25,
+        0.42
+      ]
+    },
+    "moda_praia_feminino": {
+      "varejo": [
+        0.55,
+        0.8
+      ],
+      "atacado": [
+        0.25,
+        0.42
+      ]
+    },
+    "moda_praia_masculino": {
+      "varejo": [
+        0.52,
+        0.72
+      ],
+      "atacado": [
+        0.25,
+        0.42
+      ]
+    },
+    "moda_praia_infantil": {
+      "varejo": [
+        0.52,
+        0.72
+      ],
+      "atacado": [
+        0.25,
+        0.42
+      ]
+    },
+    "acessorios": {
+      "varejo": [
+        0.5,
+        0.82
+      ],
+      "atacado": [
+        0.28,
+        0.48
+      ]
+    },
+    "acessorios_infantil": {
+      "varejo": [
+        0.55,
+        0.82
+      ],
+      "atacado": [
+        0.28,
+        0.48
+      ]
+    },
+    "fitness": {
+      "varejo": [
+        0.52,
+        0.78
+      ],
+      "atacado": [
+        0.25,
+        0.42
+      ]
+    },
+    "underwear": {
+      "varejo": [
+        0.5,
+        0.72
+      ],
+      "atacado": [
+        0.22,
+        0.38
+      ]
+    },
+    "moda_praia": {
+      "varejo": [
+        0.52,
+        0.8
+      ],
+      "atacado": [
+        0.25,
+        0.42
+      ]
+    },
+    "default": {
+      "varejo": [
+        0.5,
+        0.7
+      ],
+      "atacado": [
+        0.22,
+        0.38
+      ]
+    }
+  },
+  "remarcacao": {
+    "vestuario_feminino": [
+      0.05,
+      0.55
+    ],
+    "vestuario_masculino": [
+      0.05,
+      0.45
+    ],
+    "vestuario_infantil": [
+      0.18,
+      0.48
+    ],
+    "calcados_femininos": [
+      0.08,
+      0.5
+    ],
+    "calcados_masculinos": [
+      0.15,
+      0.42
+    ],
+    "acessorios_bolsas_feminino": [
+      0.05,
+      0.4
+    ],
+    "acessorios_bolsas_masculino": [
+      0.05,
+      0.4
+    ],
+    "acessorios": [
+      0.05,
+      0.4
+    ],
+    "bijuterias_joias": [
+      0.2,
+      0.55
+    ],
+    "fitness_feminino": [
+      0.12,
+      0.38
+    ],
+    "fitness_masculino": [
+      0.12,
+      0.38
+    ],
+    "fitness_infantil": [
+      0.12,
+      0.38
+    ],
+    "fitness": [
+      0.12,
+      0.38
+    ],
+    "moda_praia_feminino": [
+      0.15,
+      0.65
+    ],
+    "moda_praia_masculino": [
+      0.15,
+      0.65
+    ],
+    "moda_praia_infantil": [
+      0.15,
+      0.65
+    ],
+    "moda_praia": [
+      0.15,
+      0.65
+    ],
+    "underwear_feminino": [
+      0.05,
+      0.25
+    ],
+    "underwear_masculino": [
+      0.05,
+      0.25
+    ],
+    "underwear_infantil": [
+      0.05,
+      0.25
+    ],
+    "underwear": [
+      0.05,
+      0.25
+    ],
+    "default": [
+      0.12,
+      0.45
+    ]
+  },
+  "investMarketing": [
+    {
+      "segmento": "vestuario_feminino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso",
+      "min": 0.04,
+      "max": 0.1
+    },
+    {
+      "segmento": "vestuario_feminino",
+      "porte": "micro_pequeno",
+      "posicionamento": "medio",
+      "min": 0.06,
+      "max": 0.15
+    },
+    {
+      "segmento": "vestuario_feminino",
+      "porte": "medio",
+      "posicionamento": "medio",
+      "min": 0.05,
+      "max": 0.13
+    },
+    {
+      "segmento": "vestuario_feminino",
+      "porte": "medio_grande",
+      "posicionamento": "premium_luxo",
+      "min": 0.1,
+      "max": 0.24
+    },
+    {
+      "segmento": "vestuario_feminino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso",
+      "min": 0.05,
+      "max": 0.13
+    },
+    {
+      "segmento": "vestuario_masculino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.03,
+      "max": 0.09
+    },
+    {
+      "segmento": "vestuario_masculino",
+      "porte": "medio",
+      "posicionamento": "medio",
+      "min": 0.05,
+      "max": 0.12
+    },
+    {
+      "segmento": "vestuario_masculino",
+      "porte": "medio_grande",
+      "posicionamento": "premium",
+      "min": 0.1,
+      "max": 0.22
+    },
+    {
+      "segmento": "vestuario_infantil",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.04,
+      "max": 0.12
+    },
+    {
+      "segmento": "vestuario_infantil",
+      "porte": "medio_grande",
+      "posicionamento": "premium",
+      "min": 0.09,
+      "max": 0.2
+    },
+    {
+      "segmento": "calcados_femininos",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso",
+      "min": 0.04,
+      "max": 0.11
+    },
+    {
+      "segmento": "calcados_femininos",
+      "porte": "medio",
+      "posicionamento": "medio",
+      "min": 0.05,
+      "max": 0.14
+    },
+    {
+      "segmento": "calcados_femininos",
+      "porte": "medio_grande",
+      "posicionamento": "premium_luxo",
+      "min": 0.12,
+      "max": 0.26
+    },
+    {
+      "segmento": "calcados_masculinos",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso",
+      "min": 0.03,
+      "max": 0.09
+    },
+    {
+      "segmento": "calcados_masculinos",
+      "porte": "medio",
+      "posicionamento": "medio",
+      "min": 0.04,
+      "max": 0.12
+    },
+    {
+      "segmento": "calcados_infantis",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.03,
+      "max": 0.1
+    },
+    {
+      "segmento": "acessorios_bolsas_feminino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.05,
+      "max": 0.14
+    },
+    {
+      "segmento": "acessorios_bolsas_feminino",
+      "porte": "medio_grande",
+      "posicionamento": "premium_luxo",
+      "min": 0.13,
+      "max": 0.28
+    },
+    {
+      "segmento": "acessorios_bolsas_masculino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.04,
+      "max": 0.12
+    },
+    {
+      "segmento": "bijuterias_joias",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso",
+      "min": 0.05,
+      "max": 0.15
+    },
+    {
+      "segmento": "bijuterias_joias",
+      "porte": "micro_pequeno",
+      "posicionamento": "medio",
+      "min": 0.06,
+      "max": 0.17
+    },
+    {
+      "segmento": "bijuterias_joias",
+      "porte": "medio_grande",
+      "posicionamento": "premium_luxo",
+      "min": 0.12,
+      "max": 0.25
+    },
+    {
+      "segmento": "underwear_feminino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.03,
+      "max": 0.09
+    },
+    {
+      "segmento": "underwear_masculino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.03,
+      "max": 0.08
+    },
+    {
+      "segmento": "underwear_infantil",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.03,
+      "max": 0.09
+    },
+    {
+      "segmento": "fitness_feminino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.05,
+      "max": 0.15
+    },
+    {
+      "segmento": "fitness_feminino",
+      "porte": "medio_grande",
+      "posicionamento": "premium",
+      "min": 0.12,
+      "max": 0.26
+    },
+    {
+      "segmento": "fitness_masculino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.04,
+      "max": 0.12
+    },
+    {
+      "segmento": "fitness_infantil",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.04,
+      "max": 0.12
+    },
+    {
+      "segmento": "moda_praia_feminino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.07,
+      "max": 0.18
+    },
+    {
+      "segmento": "moda_praia_feminino",
+      "porte": "medio_grande",
+      "posicionamento": "premium",
+      "min": 0.13,
+      "max": 0.28
+    },
+    {
+      "segmento": "moda_praia_masculino",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.05,
+      "max": 0.15
+    },
+    {
+      "segmento": "moda_praia_infantil",
+      "porte": "micro_pequeno",
+      "posicionamento": "acesso_medio",
+      "min": 0.05,
+      "max": 0.15
+    }
+  ]
+}

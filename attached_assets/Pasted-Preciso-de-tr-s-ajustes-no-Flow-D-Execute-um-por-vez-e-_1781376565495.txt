@@ -1,0 +1,159 @@
+Preciso de três ajustes no Flow D. Execute um por vez e aguarde confirmação.
+
+════════════════════════════════════════════
+AJUSTE 1 — Card ESTRATÉGIA na tela inicial (HomeScreen ou equivalente)
+════════════════════════════════════════════
+
+Faça uma busca em todos os arquivos pelo texto exato:
+"Definir uma estratégia de preço"
+
+Localize onde aparece como texto renderizado no card amarelo da tela inicial
+(badge "ESTRATÉGIA"). Não altere o card PRODUTO nem o card NEGÓCIO.
+
+Substitua apenas estes textos no card ESTRATÉGIA:
+
+  "Definir uma estratégia de preço"
+  → "Analise seu posicionamento de preço"
+
+  "Defina o preço que entrega a margem que você precisa e posiciona sua marca
+  no mercado."
+  → "Avalie os atributos da sua marca frente aos concorrentes. Descubra se o
+  seu preço reflete o valor percebido pelo cliente ou se exige ajustes de
+  custos e comunicação."
+
+  "Custo + Margem desejada → Preço certo"
+  → "Valor Percebido + Concorrência = Preço Estratégico"
+
+  CTA "→ Calcular"
+  → "→ Montar matriz"
+  (não altere o handler/rota — apenas o label visível)
+
+Mostre o trecho atual antes de editar.
+
+════════════════════════════════════════════
+AJUSTE 2 — Botão "Adicionar concorrente" no Step 2 (Step2Competitors.tsx)
+════════════════════════════════════════════
+
+Abra o arquivo Step2Competitors.tsx (ou o componente que renderiza o Step 2
+do Flow D — o de concorrentes). Localize o botão "+ Adicionar concorrente"
+ou equivalente.
+
+Hoje ele provavelmente aparece apenas no final da lista ou no início do form.
+Faça as seguintes alterações:
+
+2a. O botão deve aparecer em DOIS lugares:
+    - No TOPO: logo abaixo do texto introdutório (antes do primeiro concorrente
+      ou antes do form de novo concorrente), separado por um divider.
+    - No RODAPÉ: após o último concorrente cadastrado (posição atual).
+
+2b. Torne o botão mais destacado nos dois locais:
+    Estilo atual (provavelmente discreto): identifique o estilo atual e me
+    mostre antes de alterar.
+    
+    Novo estilo para AMBAS as ocorrências:
+    - border: 1.5px dashed #7C9DD0
+    - background: transparent (hover: #EEF3FA)
+    - texto: "＋ Adicionar concorrente"
+    - cor do texto: #7C9DD0
+    - font-weight: 600
+    - padding: py-3 px-4
+    - border-radius: rounded-xl
+    - width: w-full
+    - font-size: text-[14px]
+
+2c. O comportamento de clique em ambos os botões deve ser idêntico ao atual
+    (abre o form de novo concorrente ou adiciona à lista). Não altere a lógica.
+
+Mostre o trecho atual do componente antes de editar.
+
+════════════════════════════════════════════
+AJUSTE 3 — Card "Próxima fase" → exportar relatório completo (FlowDResult.tsx)
+════════════════════════════════════════════
+
+Arquivo: FlowDResult.tsx
+
+O card "Próxima fase" (linhas ~326-339) tem um botão que hoje alterna o estado
+`guiaAberto` (mostra/esconde a seção "O que levar para o profissional").
+
+Faça as seguintes alterações:
+
+3a. Mantenha a seção "O que levar para o profissional" (o bloco amarelo
+    guiaAberto) exatamente como está — não remova nem altere o conteúdo.
+    Deixe-a sempre visível (remova o toggle: `guiaAberto` sempre true,
+    ou simplesmente renderize o bloco sem condição).
+
+3b. Substitua o botão atual do card "Próxima fase":
+    De: alterna guiaAberto
+    Para: chama uma nova função `handleExportarRelatorio()`
+
+    Novo label do botão: "↓ Baixar relatório completo"
+    Manter o estilo atual (border #C8B840, texto #4B3520, hover #F6F1AF).
+
+3c. Crie a função `handleExportarRelatorio()` dentro de FlowDResult.
+    Ela deve gerar e fazer download de um arquivo HTML com o relatório
+    completo. Use o padrão de Blob + URL.createObjectURL (mesmo padrão
+    já usado em ScenarioCompare.tsx para o CSV).
+
+    Conteúdo do relatório HTML (página única, printável, CSS inline):
+
+    CABEÇALHO:
+      Logo textual "THE FASHION OFFICE — Diagnóstico de Posicionamento de Preço"
+      Data de geração: new Date().toLocaleDateString('pt-BR')
+
+    SEÇÃO 1 — Resultado geral:
+      Score total: {totalScore}/60
+      Posicionamento identificado: {tierConfig.label}
+      Descrição: {tierConfig.descricao}
+      Posicionamento atual declarado: {tierAtual?.label ?? '—'}
+      Posicionamento desejado: {tierDesejado?.label ?? '—'}
+
+    SEÇÃO 2 — Score por dimensão:
+      Para cada dimensão (PRODUTO, MARCA, PRESENÇA, MARKETING):
+        Nome da dimensão + média (ex: "Produto: 3.8/5")
+      Use os dados de `dimensoes` (já calculado no componente)
+
+    SEÇÃO 3 — Suas notas por critério:
+      Para cada critério em data.scores:
+        Nome do critério (use CRITERIOS de criterios.ts para obter o `titulo`)
+        + nota dada (data.scores[id])
+      Mostre em lista simples
+
+    SEÇÃO 4 — Concorrentes mapeados:
+      Para cada concorrente em data.concorrentes:
+        Nome, preço médio, posicionamento declarado
+        Diferenciais marcados (lista)
+
+    SEÇÃO 5 — Preço sugerido:
+      Se precoResult.hasPreco:
+        Faixa: R$ {precoMin.toFixed(0)} – R$ {precoMax.toFixed(0)}
+        Base de cálculo: {precoResult.baseRef}
+
+    SEÇÃO 6 — Benchmark de marketing:
+      Faixa de investimento para {tierConfig.label}:
+        {marketingRec.benchmark.pctMin}% – {marketingRec.benchmark.pctMax}%
+      Prioridades: lista de marketingRec.benchmark.prioridades
+      Nota: {marketingRec.benchmark.nota}
+
+    SEÇÃO 7 — O que levar para o profissional:
+      Copie o conteúdo exato que já aparece no bloco guiaAberto:
+      - As 3 perguntas numeradas
+      - As 4 perguntas de pesquisa com clientes (em itálico)
+
+    RODAPÉ:
+      "Este diagnóstico é baseado na autopercepção da marca. Valide com
+      pesquisa real junto ao seu público antes de tomar decisões definitivas."
+      "Gerado por The Fashion Office · Ferramenta de Precificação"
+
+    Estilo do HTML: fundo branco, fonte Arial/sans-serif, max-width 800px,
+    margens generosas, hierarquia clara com h1/h2/h3. Apto para impressão
+    (window.print()) ou salvar como PDF pelo navegador.
+
+    Nome do arquivo: `tfo-diagnostico-posicionamento-${new Date().toISOString().slice(0,10)}.html`
+
+Regras gerais:
+- Mostre cada trecho atual antes de editar.
+- Não altere a lógica de cálculo (totalScore, tier, dimensoes, precoResult,
+  marketingRec) — apenas a renderização e o export.
+- Não altere os outros dois cards (Passo imediato e Visão completa).
+- O estado `guiaAberto` pode ser removido se não for mais usado por nada.
+  Verifique se há outro uso antes de remover.

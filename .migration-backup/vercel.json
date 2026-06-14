@@ -1,0 +1,6 @@
+{
+  "framework": "vite",
+  "buildCommand": "cd $(git rev-parse --show-toplevel) && pnpm install --frozen-lockfile && pnpm --filter @workspace/tfo-pricing run build",
+  "outputDirectory": "artifacts/tfo-pricing/dist/public",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
