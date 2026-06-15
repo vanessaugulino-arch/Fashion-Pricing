@@ -151,6 +151,12 @@ export default function FlowDResult({ data, onVerMargem, onVerNegocio, onNovaAna
 
     const prioridadesHtml = marketingRec.benchmark.prioridades.map(p => `<li>${p}</li>`).join('');
 
+    const POSIC_EDITORIAL_LABELS: Record<string, string> = {
+      basico: 'Básico', classico: 'Clássico', contemporaneo: 'Contemporâneo',
+      editorial: 'Editorial', alta_moda: 'Alta Moda',
+    };
+    const editorialLabel = data.posicionamentoEditorial ? (POSIC_EDITORIAL_LABELS[data.posicionamentoEditorial] ?? data.posicionamentoEditorial) : null;
+
     const html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -187,6 +193,8 @@ export default function FlowDResult({ data, onVerMargem, onVerNegocio, onNovaAna
 <div class="section">
   <p><strong>Posicionamento atual declarado:</strong> ${tierAtual?.label ?? '—'}</p>
   <p><strong>Posicionamento desejado:</strong> ${tierDesejado?.label ?? '—'}</p>
+  ${editorialLabel ? `<p><strong>Posicionamento editorial:</strong> ${editorialLabel} — onde a marca se situa na cadeia criativa</p>` : ''}
+  ${data.segmento ? `<p><strong>Segmento:</strong> ${data.segmento}</p>` : ''}
 </div>
 
 <h2>2. Score por Dimensão</h2>

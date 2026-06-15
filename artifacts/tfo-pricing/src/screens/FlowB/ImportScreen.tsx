@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { useToolStore, DespesaItem } from '@/store/useToolStore';
-import { MODELO_VENDAS, MODELO_DESPESAS, sugerirCampo } from '@/data/importModels';
+import { MODELO_VENDAS, MODELO_DESPESAS, sugerirCampo, inferirTipoFromCell } from '@/data/importModels';
 import { classificarDespesa } from './despesaUtils';
 
 type ModeloId = 'vendas' | 'despesas';
@@ -28,7 +28,8 @@ const CAMPO_OPTIONS_VENDAS = [
 
 const CAMPO_OPTIONS_DESPESAS = [
   { value: 'nome_despesa', label: 'Nome da despesa' },
-  { value: 'valor_despesa', label: 'Valor mensal (R$)' },
+  { value: 'valor_despesa', label: 'Valor (R$ ou %)' },
+  { value: 'tipo_despesa', label: 'Tipo (% variável / R$ fixo)' },
   { value: 'nao_importar', label: 'Não importar' },
 ];
 
@@ -142,9 +143,11 @@ export default function ImportScreen({ onClose, onImportVendas }: Props) {
     } else {
       const nomeCampoCols = Object.entries(mapeamento).filter(([, v]) => v === 'nome_despesa').map(([k]) => parseInt(k));
       const valorCampoCols = Object.entries(mapeamento).filter(([, v]) => v === 'valor_despesa').map(([k]) => parseInt(k));
+      const tipoCampoCols = Object.entries(mapeamento).filter(([, v]) => v === 'tipo_despesa').map(([k]) => parseInt(k));
+      const hasTipoCol = tipoCampoCols.length > 0;
 
       if (nomeCampoCols.length === 0 || valorCampoCols.length === 0) {
-        showToast('Mapeie pelo menos "Nome da despesa" e "Valor mensal".');
+        showToast('Mapeie pelo menos "Nome da despesa" e "Valor".');
         return;
       }
 
@@ -157,8 +160,18 @@ export default function ImportScreen({ onClose, onImportVendas }: Props) {
           problemas.push(ri + 2);
           return;
         }
+
+        let isPercentual: boolean;
+        if (hasTipoCol) {
+          const tipoCell = row[tipoCampoCols[0]] ?? '';
+          const inferred = inferirTipoFromCell(tipoCell);
+          isPercentual = inferred !== null ? inferred : (classificarDespesa(nome) === 'variavel' || classificarDespesa(nome) === 'imposto');
+        } else {
+          const cat = classificarDespesa(nome);
+          isPercentual = cat === 'variavel' || cat === 'imposto';
+        }
+
         const cat = classificarDespesa(nome);
-        const isPercentual = cat === 'variavel' || cat === 'imposto';
         importadas.push({
           id: uid(),
           nome: nome.trim(),
@@ -241,6 +254,11 @@ export default function ImportScreen({ onClose, onImportVendas }: Props) {
               <p className="text-[13px] text-[#6B7280]">
                 O arquivo tem <strong>{parsed.colunas.length}</strong> colunas e <strong>{parsed.linhas.length}</strong> linhas de dados. Diga ao sistema o que cada coluna representa.
               </p>
+              {modelo === 'despesas' && (
+                <div className="rounded-xl px-4 py-3 text-[12px] leading-relaxed border" style={{ background: '#F6F1AF', borderColor: 'rgba(200,184,64,0.4)', color: '#4B3520' }}>
+                  💡 Se sua planilha tiver uma coluna "Tipo" ou "Modalidade" indicando se a despesa é em <strong>%</strong> (variável) ou <strong>R$</strong> (fixo), mapeie ela como <em>"Tipo (% variável / R$ fixo)"</em> para importação precisa. Sem essa coluna, o sistema detecta automaticamente pelo nome da despesa.
+                </div>
+              )}
 
               <div className="flex flex-col gap-2">
                 {parsed.colunas.map((col, i) => (

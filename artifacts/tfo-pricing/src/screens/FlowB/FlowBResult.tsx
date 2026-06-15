@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useToolStore } from '@/store/useToolStore';
 import type { DespesaItem } from '@/store/useToolStore';
 import { CATEGORIA_CONFIG } from './despesaUtils';
+import UpgradeModal from '@/components/ui/UpgradeModal';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -198,6 +199,8 @@ const PAPEL_LABELS: Record<string, string> = { icone: 'Ícone de Marca', sustent
 // ─── Main component ──────────────────────────────────────────────────────────
 
 export default function FlowBResult({ resultData, onBack, setActiveFlow }: Props) {
+  const { isPremium } = useToolStore();
+  const [showUpgradeMix, setShowUpgradeMix] = useState(false);
   const {
     segmentoLabel, canal, canalBenchmark, percVarejo, percAtacado,
     precoMedioConsolidado: preco, custoMedio: custo,
@@ -523,57 +526,91 @@ export default function FlowBResult({ resultData, onBack, setActiveFlow }: Props
           </div>
         )}
 
-        {/* ── Mix portfólio ── */}
-        <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-sm overflow-hidden">
-          <div className="px-5 pt-5 pb-3 border-b border-gray-100">
-            <div className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#7C9DD0] mb-1">Distribuição Sugerida para o Seu Mix</div>
-            <p className="text-[12px] text-gray-500 leading-relaxed">
-              Com base no seu segmento e resultado, esta distribuição pode melhorar sua margem ponderada.
-              <span className="ml-1 italic text-gray-400">(Perfil inferido: {PERFIL_LABELS[perfil]})</span>
-            </p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-[13px]">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Tipo</th>
-                  <th className="text-center px-3 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Part.</th>
-                  <th className="text-center px-3 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Margem</th>
-                  <th className="text-center px-3 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Remarc.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(Object.keys(PAPEL_LABELS) as Array<keyof typeof PAPEL_LABELS>).map((key, i) => {
-                  const papel = PAPEL_PRODUTO_DEFAULTS[key as keyof typeof PAPEL_PRODUTO_DEFAULTS];
-                  const part = mixDefault[key as keyof typeof mixDefault];
-                  return (
-                    <tr key={key} className={i < Object.keys(PAPEL_LABELS).length - 1 ? 'border-b border-gray-100' : ''}>
-                      <td className="px-5 py-3 font-sans text-[#2F1B20] font-medium">{PAPEL_LABELS[key]}</td>
-                      <td className="px-3 py-3 text-center text-gray-600">{part}%</td>
-                      <td className="px-3 py-3 text-center font-medium text-[#2D6A4F]">{papel.margem}%</td>
-                      <td className="px-3 py-3 text-center text-gray-500">{papel.remarcacao}%</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
-            <div className="text-[13px] text-gray-600">
-              Margem ponderada estimada:{' '}
-              <span className="font-bold text-[#2D6A4F]">{formatPercent(margemPonderadaSugerida)}</span>
-              <span className="ml-2 text-gray-400 text-[12px]">
-                vs. sua MC atual: {formatPercent(mc_pct)}{' '}
-                <span className={deltaMargemMix >= 0 ? 'text-[#2D6A4F]' : 'text-[#991B1B]'}>
-                  ({deltaMargemMix >= 0 ? '+' : ''}{deltaMargemMix.toFixed(1)} pp)
+        {/* ── Mix portfólio — Premium ── */}
+        {showUpgradeMix && (
+          <UpgradeModal
+            feature="mix_portfolio"
+            description="Veja a distribuição ideal de mix de produtos (Ícone, Sustentador, Motor de Giro, Porta de Entrada) e simule o impacto na sua margem ponderada."
+            onClose={() => setShowUpgradeMix(false)}
+          />
+        )}
+        {isPremium ? (
+          <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+            <div className="px-5 pt-5 pb-3 border-b border-gray-100">
+              <div className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#7C9DD0] mb-1">Distribuição Sugerida para o Seu Mix</div>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-[12px] text-gray-500 leading-relaxed">
+                  Com base no seu segmento e resultado, esta distribuição pode melhorar sua margem ponderada.
+                </p>
+                {resultData.perfilMarca ? (
+                  <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full" style={{ background: '#ECFDF5', color: '#065F46' }}>
+                    ✓ Perfil calibrado pelo diagnóstico de valor: {PERFIL_LABELS[resultData.perfilMarca] ?? resultData.perfilMarca}
+                  </span>
+                ) : (
+                  <span className="text-[11px] text-gray-400 italic">Perfil inferido: {PERFIL_LABELS[perfil]}</span>
+                )}
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-[13px]">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100">
+                    <th className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Tipo</th>
+                    <th className="text-center px-3 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Part.</th>
+                    <th className="text-center px-3 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Margem</th>
+                    <th className="text-center px-3 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Remarc.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(Object.keys(PAPEL_LABELS) as Array<keyof typeof PAPEL_LABELS>).map((key, i) => {
+                    const papel = PAPEL_PRODUTO_DEFAULTS[key as keyof typeof PAPEL_PRODUTO_DEFAULTS];
+                    const part = mixDefault[key as keyof typeof mixDefault];
+                    return (
+                      <tr key={key} className={i < Object.keys(PAPEL_LABELS).length - 1 ? 'border-b border-gray-100' : ''}>
+                        <td className="px-5 py-3 font-sans text-[#2F1B20] font-medium">{PAPEL_LABELS[key]}</td>
+                        <td className="px-3 py-3 text-center text-gray-600">{part}%</td>
+                        <td className="px-3 py-3 text-center font-medium text-[#2D6A4F]">{papel.margem}%</td>
+                        <td className="px-3 py-3 text-center text-gray-500">{papel.remarcacao}%</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
+              <div className="text-[13px] text-gray-600">
+                Margem ponderada estimada:{' '}
+                <span className="font-bold text-[#2D6A4F]">{formatPercent(margemPonderadaSugerida)}</span>
+                <span className="ml-2 text-gray-400 text-[12px]">
+                  vs. sua MC atual: {formatPercent(mc_pct)}{' '}
+                  <span className={deltaMargemMix >= 0 ? 'text-[#2D6A4F]' : 'text-[#991B1B]'}>
+                    ({deltaMargemMix >= 0 ? '+' : ''}{deltaMargemMix.toFixed(1)} pp)
+                  </span>
                 </span>
+              </div>
+              <button onClick={() => setActiveFlow('MIX')} className="text-[13px] font-sans font-medium text-[#7C9DD0] border border-[#7C9DD0] rounded-xl px-4 py-2 hover:bg-[#F8FAFC] transition-all">
+                → Simular e ajustar a distribuição
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowUpgradeMix(true)}
+            className="w-full bg-white rounded-2xl border border-dashed border-gray-200 p-6 text-left hover:border-[#7C9DD0]/50 hover:bg-[#F8FAFC] transition-all group"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-300 mb-1 group-hover:text-[#7C9DD0] transition-colors">Distribuição Sugerida do Mix</div>
+                <p className="text-[13px] text-gray-400 leading-relaxed">
+                  Descubra a distribuição ideal entre Ícone, Sustentador, Motor de Giro e Porta de Entrada — e veja o impacto na sua margem ponderada.
+                </p>
+              </div>
+              <span className="flex-shrink-0 text-[13px] font-medium px-3 py-1.5 rounded-full" style={{ background: '#EEF3FA', color: '#7C9DD0' }}>
+                🔒 Premium
               </span>
             </div>
-            <button onClick={() => setActiveFlow('MIX')} className="text-[13px] font-sans font-medium text-[#7C9DD0] border border-[#7C9DD0] rounded-xl px-4 py-2 hover:bg-[#F8FAFC] transition-all">
-              → Simular e ajustar a distribuição
-            </button>
-          </div>
-        </div>
+          </button>
+        )}
 
         {/* ── Cenários ── */}
         <ScenarioBlock resultData={resultData} />
