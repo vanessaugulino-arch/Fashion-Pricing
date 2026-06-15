@@ -1,6 +1,14 @@
 import React from 'react';
-import { FlowDState, PosicionamentoTier } from '../types';
+import { FlowDState, PosicionamentoTier, PosicionamentoEditorial } from '../types';
 import { POSICIONAMENTOS } from '../criterios';
+
+const POSICIONAMENTOS_EDITORIAIS: Array<{ id: PosicionamentoEditorial; label: string; desc: string }> = [
+  { id: 'essencial', label: 'Essencial', desc: 'Funcional e de reposição. Giro domina, ícone mínimo.' },
+  { id: 'classico', label: 'Clássico', desc: 'Identidade emergente. Sustentador ganha peso.' },
+  { id: 'contemporaneo', label: 'Contemporâneo', desc: 'Equilíbrio entre narrativa e resultado.' },
+  { id: 'editorial', label: 'Editorial', desc: 'Marca como produto. Ícones são ferramentas de desejo.' },
+  { id: 'alta_moda', label: 'Alta Moda', desc: 'Ícone é a alma da coleção. Luxo não usa isca de preço.' },
+];
 
 interface Props {
   data: FlowDState;
@@ -32,6 +40,34 @@ export default function Step1Context({ data, onChange, onNext }: Props) {
           placeholder="Ex: moda feminina contemporânea, roupas íntimas, streetwear..."
           className={fieldClass}
         />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="text-[13px] font-semibold text-[#2F1B20]">
+          Posicionamento editorial <span className="text-gray-400 font-normal">(opcional)</span>
+        </label>
+        <p className="text-[12px] text-gray-500 -mt-1">Onde a marca se situa na cadeia criativa — independente do preço praticado.</p>
+        <div className="flex flex-col gap-1.5">
+          {POSICIONAMENTOS_EDITORIAIS.map(pe => {
+            const sel = data.posicionamentoEditorial === pe.id;
+            return (
+              <button
+                key={pe.id}
+                type="button"
+                onClick={() => onChange({ posicionamentoEditorial: sel ? '' : pe.id as PosicionamentoEditorial })}
+                className={`text-left rounded-xl px-4 py-3 border-[1.5px] transition-all flex items-start gap-3 ${sel ? 'shadow-[0_0_0_2px_rgba(200,184,64,0.2)]' : 'hover:border-gray-300'}`}
+                style={{ borderColor: sel ? '#C8B840' : '#E5E7EB', background: sel ? 'rgba(200,184,64,0.06)' : 'white' }}
+              >
+                <div className="w-3.5 h-3.5 rounded-full border-[2px] flex-shrink-0 mt-0.5 transition-all"
+                  style={{ borderColor: sel ? '#C8B840' : '#D1D5DB', background: sel ? '#C8B840' : 'transparent' }} />
+                <div>
+                  <span className="text-[13px] font-semibold text-[#2F1B20]">{pe.label}</span>
+                  <span className="text-[12px] text-gray-400 ml-2">{pe.desc}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">

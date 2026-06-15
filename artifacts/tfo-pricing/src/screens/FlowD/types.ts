@@ -1,4 +1,5 @@
 export type PosicionamentoTier = '' | 'acesso' | 'medio' | 'premium' | 'premium_luxo';
+export type PosicionamentoEditorial = '' | 'essencial' | 'classico' | 'contemporaneo' | 'editorial' | 'alta_moda';
 export type ComparacaoTipo = 'eles-melhores' | 'mesmo-nivel' | 'eu-melhor' | 'nao-ofereco';
 
 export interface Concorrente {
@@ -12,6 +13,7 @@ export interface Concorrente {
 
 export interface FlowDState {
   segmento: string;
+  posicionamentoEditorial: PosicionamentoEditorial;
   posicionamentoAtual: PosicionamentoTier;
   posicionamentoDesejado: PosicionamentoTier;
   precoMedioAtual: string;
@@ -36,6 +38,7 @@ export const INITIAL_SCORES: Record<string, number> = {
 
 export const INITIAL_STATE: FlowDState = {
   segmento: '',
+  posicionamentoEditorial: '',
   posicionamentoAtual: '',
   posicionamentoDesejado: '',
   precoMedioAtual: '',

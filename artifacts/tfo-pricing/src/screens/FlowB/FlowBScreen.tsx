@@ -32,10 +32,10 @@ type Canal = 'varejo' | 'atacado' | 'hibrido';
 type TipoPreco = 'definido' | 'realizado';
 
 function getPorteLabel(fat: number): string {
-  if (fat <= 6750) return 'Microempreendedor';
-  if (fat <= 30000) return 'Pequeno negócio';
-  if (fat <= 400000) return 'Médio negócio';
-  return 'Grande negócio';
+  if (fat <= 30000) return 'Micro';
+  if (fat <= 300000) return 'Pequeno';
+  if (fat <= 3000000) return 'Médio';
+  return 'Médio/Grande';
 }
 
 // ─── Step progress ───────────────────────────────────────────────────────────
@@ -324,19 +324,21 @@ const ExpenseBlock = ({ items, onAdd, onRemove, faturamentoTotal }: ExpenseBlock
 
         {/* Hint da despesa selecionada */}
         {selected && (
-          <div className="flex flex-wrap items-center gap-2 text-[12px]">
-            <span
-              className="px-2 py-0.5 rounded-full text-[11px] font-medium border"
-              style={{
-                background: TIPO_CONFIG[isPerc ? 'variavel' : 'fixo'].bg,
-                color: TIPO_CONFIG[isPerc ? 'variavel' : 'fixo'].text,
-                borderColor: TIPO_CONFIG[isPerc ? 'variavel' : 'fixo'].border,
-              }}
-            >
-              {TIPO_CONFIG[isPerc ? 'variavel' : 'fixo'].icon} {isPerc ? 'Variável (%)' : 'Fixo (R$/mês)'}
-            </span>
-            <span className="italic text-gray-500">{selected.descricao}</span>
-            {benchHint && <span className="font-medium" style={{ color: '#7C9DD0' }}>{benchHint}</span>}
+          <div className="flex flex-col gap-1.5 text-[12px]">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className="px-2 py-0.5 rounded-full text-[11px] font-medium border"
+                style={{
+                  background: TIPO_CONFIG[isPerc ? 'variavel' : 'fixo'].bg,
+                  color: TIPO_CONFIG[isPerc ? 'variavel' : 'fixo'].text,
+                  borderColor: TIPO_CONFIG[isPerc ? 'variavel' : 'fixo'].border,
+                }}
+              >
+                {TIPO_CONFIG[isPerc ? 'variavel' : 'fixo'].icon} {isPerc ? 'Variável (%)' : 'Fixo (R$/mês)'}
+              </span>
+              {benchHint && <span className="font-medium" style={{ color: '#7C9DD0' }}>{benchHint}</span>}
+            </div>
+            <p className="italic text-gray-500 leading-snug">{selected.descricao}</p>
           </div>
         )}
       </div>
@@ -662,8 +664,8 @@ export default function FlowBScreen() {
         </button>
       </div>
 
-      <h2 className="font-serif text-[22px] md:text-[26px] text-[#2F1B20] mb-1">Simulador de Impacto</h2>
-      <p className="font-sans text-[15px] text-[#6B7280] mb-4">Preencha os dados do mês para ver onde o seu resultado está.</p>
+      <h2 className="font-serif text-[22px] md:text-[26px] text-[#2F1B20] mb-1">Análise de Precificação do Negócio</h2>
+      <p className="font-sans text-[15px] text-[#6B7280] mb-4">Preencha os dados do mês para ver margem, resultado operacional e ponto de equilíbrio.</p>
 
       <button
         onClick={() => setShowImport(true)}

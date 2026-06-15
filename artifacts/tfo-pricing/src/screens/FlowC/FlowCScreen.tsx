@@ -11,10 +11,12 @@ export default function FlowCScreen() {
   const [margem, setMargem] = useState(42);
   const [icms, setIcms] = useState('');
   const [taxas, setTaxas] = useState('');
+  const [precoAtual, setPrecoAtual] = useState('');
 
   const custoNum = parseFloat(custo) || 0;
   const icmsNum = icms !== '' ? parseFloat(icms) : 10;
   const taxasNum = taxas !== '' ? parseFloat(taxas) : 11.5;
+  const precoAtualNum = parseFloat(precoAtual) || 0;
   const somaTotal = icmsNum + taxasNum + margem;
   const isInvalid = somaTotal >= 100;
   const hasResult = custoNum > 0 && !isInvalid;
@@ -28,8 +30,10 @@ export default function FlowCScreen() {
     const impostoTaxasRs = precoIdeal * ((icmsNum + taxasNum) / 100);
     const custoPct = (custoNum / precoIdeal) * 100;
     const impostoTaxasPct = icmsNum + taxasNum;
-    return { precoIdeal, markup, margemRs, impostoTaxasRs, custoPct, impostoTaxasPct };
-  }, [custoNum, icmsNum, taxasNum, margem, hasResult]);
+    const deltaRs = precoAtualNum > 0 ? precoAtualNum - precoIdeal : null;
+    const deltaPct = precoAtualNum > 0 ? ((precoAtualNum - precoIdeal) / precoIdeal) * 100 : null;
+    return { precoIdeal, markup, margemRs, impostoTaxasRs, custoPct, impostoTaxasPct, deltaRs, deltaPct };
+  }, [custoNum, icmsNum, taxasNum, margem, precoAtualNum, hasResult]);
 
   const fieldClass =
     'flex items-center border-[1.5px] border-gray-300 rounded-xl overflow-hidden transition-all focus-within:border-[#C8B840] focus-within:ring-[3px] focus-within:ring-[#C8B840]/20';
@@ -38,10 +42,10 @@ export default function FlowCScreen() {
     <div className="max-w-[860px] mx-auto px-4 py-8">
       <BackButton />
       <h2 className="font-serif text-[22px] md:text-[26px] text-[#2F1B20] mb-1">
-        Descobrir o preço ideal
+        Formação de Preço
       </h2>
       <p className="font-sans text-[15px] text-[#6B7280] mb-8">
-        Informe o custo e a margem que você precisa. O preço ideal aparece em tempo real.
+        Informe o custo e a margem desejada. O preço ideal aparece em tempo real.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -166,6 +170,29 @@ export default function FlowCScreen() {
               <span className="text-[12px] text-gray-400">Taxas de pagamento + comissões de venda</span>
             </div>
 
+            {/* Preço atual praticado */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] font-sans font-semibold text-[#2F1B20]">
+                Preço atual praticado <span className="text-gray-400 font-normal">(opcional)</span>
+              </label>
+              <div className={fieldClass}>
+                <span className="px-3 py-3 text-[14px] text-gray-500 bg-gray-50 border-r border-gray-200 select-none">
+                  R$
+                </span>
+                <input
+                  data-testid="input-c-preco-atual"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={precoAtual}
+                  onChange={e => setPrecoAtual(e.target.value)}
+                  placeholder="0,00"
+                  className="flex-1 px-3 py-3 text-[15px] font-sans text-right outline-none"
+                />
+              </div>
+              <span className="text-[12px] text-gray-400">Compare com o preço ideal calculado</span>
+            </div>
+
             {/* Indicador em tempo real */}
             <div
               className={`rounded-xl p-4 border text-[13px] ${
@@ -235,6 +262,51 @@ export default function FlowCScreen() {
                     Markup: {formatMultiplier(result.markup)}
                   </div>
                 </div>
+
+                {/* Comparação com preço atual */}
+                {result.deltaRs !== null && result.deltaPct !== null && (
+                  <div
+                    className="rounded-2xl p-5 border"
+                    style={{
+                      background: result.deltaRs >= 0 ? '#ECFDF5' : '#FEF2F2',
+                      borderColor: result.deltaRs >= 0 ? '#A7F3D0' : '#FECACA',
+                    }}
+                  >
+                    <div
+                      className="text-[11px] font-sans font-semibold uppercase tracking-[0.1em] mb-3"
+                      style={{ color: result.deltaRs >= 0 ? '#065F46' : '#991B1B' }}
+                    >
+                      {result.deltaRs >= 0 ? 'Preço atual acima do ideal' : 'Preço atual abaixo do ideal'}
+                    </div>
+                    <div className="flex items-end gap-3">
+                      <div>
+                        <div className="text-[11px] text-gray-500 mb-0.5">Atual</div>
+                        <div className="text-[22px] font-bold" style={{ color: result.deltaRs >= 0 ? '#065F46' : '#991B1B' }}>
+                          {formatCurrency(precoAtualNum)}
+                        </div>
+                      </div>
+                      <div className="text-[20px] text-gray-400 pb-1">→</div>
+                      <div>
+                        <div className="text-[11px] text-gray-500 mb-0.5">Ideal</div>
+                        <div className="text-[22px] font-bold text-[#2F1B20]">
+                          {formatCurrency(result.precoIdeal)}
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="mt-3 text-[13px] font-medium"
+                      style={{ color: result.deltaRs >= 0 ? '#065F46' : '#991B1B' }}
+                    >
+                      {result.deltaRs >= 0 ? '+' : ''}{formatCurrency(result.deltaRs)}{' '}
+                      ({result.deltaPct >= 0 ? '+' : ''}{result.deltaPct.toFixed(1)}%)
+                    </div>
+                    <p className="text-[12px] text-gray-500 mt-1">
+                      {result.deltaRs >= 0
+                        ? 'Você já pratica acima do mínimo necessário para essa margem.'
+                        : 'Para atingir essa margem, você precisaria aumentar o preço.'}
+                    </p>
+                  </div>
+                )}
 
                 {/* Composição do preço */}
                 <div className="bg-white rounded-2xl p-5 border border-[#E5E7EB]">
@@ -308,13 +380,13 @@ export default function FlowCScreen() {
                     className="w-full py-2.5 rounded-xl text-white text-[14px] font-sans font-medium transition-all hover:opacity-90"
                     style={{ background: '#2F1B20' }}
                   >
-                    → Simulador de Impacto
+                    → Análise de Precificação do Negócio
                   </button>
                   <button
                     onClick={() => setActiveFlow('A')}
                     className="w-full py-2.5 rounded-xl text-[14px] font-sans font-medium border border-[#7C9DD0] text-[#7C9DD0] hover:bg-[#F8FAFC] transition-all"
                   >
-                    → Ver margem de outro produto
+                    → Diagnóstico de Margem
                   </button>
                 </div>
               </motion.div>

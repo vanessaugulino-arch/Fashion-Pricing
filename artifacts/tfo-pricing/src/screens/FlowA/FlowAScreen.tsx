@@ -80,7 +80,7 @@ export default function FlowAScreen() {
       <BackButton />
       <div className="flex items-start justify-between gap-4 mb-1">
         <h2 className="font-serif text-[22px] md:text-[26px] text-[#2F1B20]">
-          Ver margem de um produto
+          Diagnóstico de Margem
         </h2>
         {produtosSalvos.length >= 1 && (
           <button

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useToolStore } from '@/store/useToolStore';
-import { BarChart2, Store, Target } from 'lucide-react';
+import { BarChart2, Store, Target, Tag } from 'lucide-react';
 
 export default function EntryScreen() {
   const setActiveFlow = useToolStore(s => s.setActiveFlow);
@@ -20,7 +20,7 @@ export default function EntryScreen() {
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-5">
 
-          {/* Card A — Produto (azul) */}
+          {/* Card A — Diagnóstico de Margem (azul) */}
           <button
             onClick={() => setActiveFlow('A')}
             data-testid="card-flow-a"
@@ -37,23 +37,23 @@ export default function EntryScreen() {
               <BarChart2 size={28} />
             </div>
             <h3 className="font-sans font-semibold text-[18px] text-[#2F1B20] mb-2">
-              Ver margem de um produto
+              Diagnóstico de Margem
             </h3>
             <p className="font-sans font-normal text-[14px] text-[#6B7280] flex-grow leading-relaxed">
-              Descubra se o preço cobre os custos e como você está em relação ao mercado.
+              Analise a rentabilidade de um produto pelo preço praticado e compare com o benchmark do seu segmento.
             </p>
             <div
               className="mt-5 w-full px-3 py-2 rounded-lg text-[12px] font-sans font-medium text-[#2F1B20] text-center"
               style={{ background: 'rgba(124,157,208,0.15)' }}
             >
-              Preço − Custo − Imposto = Margem
+              Preço − Custo − Imposto = Margem Bruta
             </div>
             <div className="mt-4 flex items-center font-sans font-medium text-[14px] text-[#7C9DD0]">
               → Começar
             </div>
           </button>
 
-          {/* Card B — Negócio (vinho escuro) */}
+          {/* Card B — Análise de Precificação do Negócio (vinho escuro) */}
           <button
             onClick={() => setActiveFlow('B')}
             data-testid="card-flow-b"
@@ -70,26 +70,26 @@ export default function EntryScreen() {
               <Store size={28} />
             </div>
             <h3 className="font-sans font-semibold text-[18px] mb-2" style={{ color: '#FFFFFF' }}>
-              Analise sua Margem de Contribuição
+              Análise de Precificação do Negócio
             </h3>
             <p className="font-sans font-normal text-[14px] flex-grow leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
-              Importe ou lance seus dados para encontrar o seu ponto de equilíbrio. Avalie se as vendas pagam sua estrutura e simule a distribuição ideal do seu mix de produtos.
+              Lance sua estrutura de custos e descubra margem, ponto de equilíbrio e resultado operacional do mês.
             </p>
             <div
               className="mt-5 w-full px-3 py-2 rounded-lg text-[12px] font-sans font-medium text-center"
               style={{ background: 'rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.7)' }}
             >
-              Vendas – Despesas (Fixas/Variáveis) = Ponto de Equilíbrio
+              Receita − Custos Fixos e Variáveis = Resultado
             </div>
             <div className="mt-4 flex items-center font-sans font-medium text-[14px]" style={{ color: '#7C9DD0' }}>
               → Avaliar negócio
             </div>
           </button>
 
-          {/* Card C — Estratégia (amarelo) */}
+          {/* Card D — Analise seu posicionamento de Preço (amarelo) */}
           <button
             onClick={() => setActiveFlow('D')}
-            data-testid="card-flow-c"
+            data-testid="card-flow-d"
             className="group flex flex-col items-start text-left rounded-2xl p-6 border-[1.5px] hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(200,184,64,0.3)] transition-all duration-250 ease-out overflow-hidden"
             style={{ background: '#F6F1AF', borderColor: '#C8B840', borderTop: '3px solid #C8B840' }}
           >
@@ -103,10 +103,10 @@ export default function EntryScreen() {
               <Target size={28} />
             </div>
             <h3 className="font-sans font-semibold text-[18px] text-[#2F1B20] mb-2">
-              Analise seu posicionamento de preço
+              Analise seu posicionamento de Preço
             </h3>
             <p className="font-sans font-normal text-[14px] flex-grow leading-relaxed" style={{ color: '#4B3520' }}>
-              Avalie os atributos da sua marca frente aos concorrentes. Descubra se o seu preço reflete o valor percebido pelo cliente ou se exige ajustes de custos e comunicação.
+              Avalie atributos de marca e concorrentes. Descubra se o preço reflete o valor percebido e receba recomendações de posicionamento.
             </p>
             <div
               className="mt-5 w-full px-3 py-2 rounded-lg text-[12px] font-sans font-medium text-[#2F1B20] text-center"
@@ -119,6 +119,25 @@ export default function EntryScreen() {
             </div>
           </button>
 
+        </div>
+
+        {/* Card C — Formação de Preço (acesso secundário) */}
+        <div className="mt-4">
+          <button
+            onClick={() => setActiveFlow('C')}
+            data-testid="card-flow-c"
+            className="w-full flex items-center gap-4 text-left rounded-xl px-5 py-4 border-[1.5px] hover:shadow-[0_4px_12px_rgba(47,27,32,0.08)] transition-all duration-200"
+            style={{ background: 'white', borderColor: '#E5E7EB' }}
+          >
+            <div className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: '#F6F1AF' }}>
+              <Tag size={18} style={{ color: '#C8B840' }} />
+            </div>
+            <div className="flex-grow">
+              <span className="font-sans font-semibold text-[14px] text-[#2F1B20]">Formação de Preço</span>
+              <span className="font-sans text-[13px] text-gray-400 ml-2">— descubra o preço ideal a partir do custo e da margem desejada</span>
+            </div>
+            <span className="text-[13px] font-medium" style={{ color: '#C8B840' }}>→</span>
+          </button>
         </div>
 
         <p className="text-center font-sans font-normal text-[13px] text-[#9CA3AF] mt-10">
