@@ -16,7 +16,7 @@ const require = createRequire(import.meta.url);
 const XLSX = require('xlsx');
 
 const cwd = process.cwd();
-const XLSX_INPUT = path.resolve(cwd, '../../Data/Benchmarks_Varejo_Moda_Brasil.xlsx');
+const XLSX_INPUT = path.resolve(cwd, '../../Data/Benchmarks_Varejo_Moda_Brasil_v2_1.xlsx');
 const JSON_OUTPUT = path.resolve(cwd, 'src/data/benchmarks.json');
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
