@@ -63,6 +63,8 @@ export interface ProdutoSalvo {
 interface ToolStore {
   activeFlow: FlowType;
   currentStep: number;
+  isPremium: boolean;
+  setIsPremium: (v: boolean) => void;
   flowA: FlowAState;
   flowB: FlowBState;
   flowC: FlowCState;
@@ -131,6 +133,8 @@ export const useToolStore = create<ToolStore>()(
     (set, get) => ({
       activeFlow: null,
       currentStep: 1,
+      isPremium: false,
+      setIsPremium: (v) => set({ isPremium: v }),
       flowA: { ...initialFlowA },
       flowB: { ...initialFlowB },
       flowC: { ...initialFlowC },

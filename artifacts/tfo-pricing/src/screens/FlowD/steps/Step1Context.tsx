@@ -3,7 +3,7 @@ import { FlowDState, PosicionamentoTier, PosicionamentoEditorial } from '../type
 import { POSICIONAMENTOS } from '../criterios';
 
 const POSICIONAMENTOS_EDITORIAIS: Array<{ id: PosicionamentoEditorial; label: string; desc: string }> = [
-  { id: 'essencial', label: 'Essencial', desc: 'Funcional e de reposição. Giro domina, ícone mínimo.' },
+  { id: 'basico', label: 'Básico', desc: 'Funcional e de reposição. Giro domina, ícone mínimo.' },
   { id: 'classico', label: 'Clássico', desc: 'Identidade emergente. Sustentador ganha peso.' },
   { id: 'contemporaneo', label: 'Contemporâneo', desc: 'Equilíbrio entre narrativa e resultado.' },
   { id: 'editorial', label: 'Editorial', desc: 'Marca como produto. Ícones são ferramentas de desejo.' },

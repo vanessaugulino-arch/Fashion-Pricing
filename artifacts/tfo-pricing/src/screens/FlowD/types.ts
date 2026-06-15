@@ -1,5 +1,5 @@
 export type PosicionamentoTier = '' | 'acesso' | 'medio' | 'premium' | 'premium_luxo';
-export type PosicionamentoEditorial = '' | 'essencial' | 'classico' | 'contemporaneo' | 'editorial' | 'alta_moda';
+export type PosicionamentoEditorial = '' | 'basico' | 'classico' | 'contemporaneo' | 'editorial' | 'alta_moda';
 export type ComparacaoTipo = 'eles-melhores' | 'mesmo-nivel' | 'eu-melhor' | 'nao-ofereco';
 
 export interface Concorrente {

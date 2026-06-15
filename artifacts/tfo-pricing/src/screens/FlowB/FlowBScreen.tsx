@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { useToolStore, DespesaItem } from '@/store/useToolStore';
+import UpgradeModal from '@/components/ui/UpgradeModal';
 import {
   SEGMENTOS_FLOWA,
   getBenchmark,
@@ -102,6 +103,8 @@ interface PriceVolumeFieldsProps {
   setPecasVal: (v: string) => void;
   touched: boolean;
   fieldClass: string;
+  isPremium?: boolean;
+  onPremiumGate?: () => void;
 }
 
 const TIPO_PRECO_LEGENDA: Record<TipoPreco, string> = {
@@ -116,6 +119,7 @@ const PriceVolumeFields = ({
   fatVal, setFatVal,
   pecasVal, setPecasVal,
   touched, fieldClass,
+  isPremium, onPremiumGate,
 }: PriceVolumeFieldsProps) => (
   <div className="flex flex-col gap-4">
     <div className="flex flex-col gap-1.5">
@@ -186,19 +190,33 @@ const PriceVolumeFields = ({
       {touched && parseFloat(fatVal) <= 0 && <span className="text-[11px] text-red-500">Campo obrigatório</span>}
     </div>
 
-    <div className="flex flex-col gap-1.5">
-      <label className="text-[12px] font-sans font-semibold text-[#2F1B20]">Qtd peças / mês</label>
-      <div className={fieldClass}>
-        <input
-          type="number" step="1" min="0"
-          value={pecasVal}
-          onChange={e => setPecasVal(e.target.value)}
-          placeholder="0"
-          className="flex-1 px-3 py-2.5 text-[14px] font-sans text-right outline-none bg-white"
-        />
-        <span className="px-3 py-2.5 text-[13px] text-gray-500 bg-gray-50 border-l border-gray-200 select-none">pç</span>
+    {isPremium ? (
+      <div className="flex flex-col gap-1.5">
+        <label className="text-[12px] font-sans font-semibold text-[#2F1B20]">Qtd peças / mês</label>
+        <div className={fieldClass}>
+          <input
+            type="number" step="1" min="0"
+            value={pecasVal}
+            onChange={e => setPecasVal(e.target.value)}
+            placeholder="0"
+            className="flex-1 px-3 py-2.5 text-[14px] font-sans text-right outline-none bg-white"
+          />
+          <span className="px-3 py-2.5 text-[13px] text-gray-500 bg-gray-50 border-l border-gray-200 select-none">pç</span>
+        </div>
       </div>
-    </div>
+    ) : (
+      <button
+        type="button"
+        onClick={onPremiumGate}
+        className="flex items-center justify-between gap-3 border-[1.5px] border-dashed border-gray-200 rounded-xl px-4 py-3 text-left w-full hover:border-[#C8B840]/60 hover:bg-[#FFFBEB] transition-all group"
+      >
+        <div>
+          <div className="text-[12px] font-semibold text-gray-400 group-hover:text-[#4B3520] transition-colors">Qtd peças / mês</div>
+          <div className="text-[11px] text-gray-300 mt-0.5">Habilite no Premium para calcular ponto de equilíbrio em unidades</div>
+        </div>
+        <span className="text-[13px] flex-shrink-0" style={{ color: '#C8B840' }}>🔒</span>
+      </button>
+    )}
   </div>
 );
 
@@ -428,8 +446,10 @@ const ExpenseBlock = ({ items, onAdd, onRemove, faturamentoTotal }: ExpenseBlock
 // ─── Main screen ─────────────────────────────────────────────────────────────
 
 export default function FlowBScreen() {
-  const { setActiveFlow, setResultB, resultB, despesasLista, adicionarDespesa, removerDespesa, limparDespesas, mixPortfolio, setPerfilMarca } = useToolStore();
+  const { setActiveFlow, setResultB, resultB, despesasLista, adicionarDespesa, removerDespesa, limparDespesas, mixPortfolio, setPerfilMarca, isPremium } = useToolStore();
   const perfilMarcaStore = mixPortfolio.perfilMarca;
+  const [showUpgradePerfil, setShowUpgradePerfil] = useState(false);
+  const [showUpgradePecas, setShowUpgradePecas] = useState(false);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [showResult, setShowResult] = useState(false);
@@ -657,6 +677,12 @@ export default function FlowBScreen() {
       {showImport && (
         <ImportScreen onClose={() => setShowImport(false)} onImportVendas={handleImportVendas} />
       )}
+      {showUpgradePerfil && (
+        <UpgradeModal feature="perfil_marca" onClose={() => setShowUpgradePerfil(false)} />
+      )}
+      {showUpgradePecas && (
+        <UpgradeModal feature="pecas_mes" onClose={() => setShowUpgradePecas(false)} />
+      )}
 
       <div className="mb-2">
         <button onClick={handleBack} className="text-[13px] font-sans text-gray-400 hover:text-[#2F1B20] transition-colors flex items-center gap-1">
@@ -768,34 +794,48 @@ export default function FlowBScreen() {
                   )}
                 </AnimatePresence>
 
-                {/* ── Perfil de marca ── */}
-                <div className="flex flex-col gap-1.5">
-                  {perfilMarcaStore && (
-                    <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-[12px] font-sans" style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', color: '#065F46' }}>
-                      <span className="shrink-0">✓</span>
-                      <span>
-                        Perfil identificado pelo diagnóstico de valor:{' '}
-                        <strong>
-                          {({ acesso: 'Acesso', medio: 'Médio', premium: 'Premium', premium_luxo: 'Premium / Luxo' } as Record<string, string>)[perfilMarcaStore] ?? perfilMarcaStore}
-                        </strong>. Você pode mantê-lo ou alterar abaixo.
-                      </span>
-                    </div>
-                  )}
-                  <label className="text-[13px] font-sans font-semibold text-[#2F1B20]">
-                    Perfil de marca <span className="text-[12px] font-normal text-gray-400">(opcional)</span>
-                  </label>
-                  <select
-                    value={perfilMarcaLocal}
-                    onChange={e => handleSetPerfil(e.target.value)}
-                    className="border-[1.5px] border-gray-300 rounded-xl px-3 py-3 text-[14px] font-sans text-[#2F1B20] bg-white outline-none transition-all focus:border-[#2F1B20] appearance-none cursor-pointer"
+                {/* ── Perfil de marca — Premium ── */}
+                {isPremium ? (
+                  <div className="flex flex-col gap-1.5">
+                    {perfilMarcaStore && (
+                      <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-[12px] font-sans" style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', color: '#065F46' }}>
+                        <span className="shrink-0">✓</span>
+                        <span>
+                          Perfil identificado pelo diagnóstico de valor:{' '}
+                          <strong>
+                            {({ acesso: 'Acesso', medio: 'Médio', premium: 'Premium', premium_luxo: 'Premium / Luxo' } as Record<string, string>)[perfilMarcaStore] ?? perfilMarcaStore}
+                          </strong>. Você pode mantê-lo ou alterar abaixo.
+                        </span>
+                      </div>
+                    )}
+                    <label className="text-[13px] font-sans font-semibold text-[#2F1B20]">
+                      Perfil de marca <span className="text-[12px] font-normal text-gray-400">(opcional)</span>
+                    </label>
+                    <select
+                      value={perfilMarcaLocal}
+                      onChange={e => handleSetPerfil(e.target.value)}
+                      className="border-[1.5px] border-gray-300 rounded-xl px-3 py-3 text-[14px] font-sans text-[#2F1B20] bg-white outline-none transition-all focus:border-[#2F1B20] appearance-none cursor-pointer"
+                    >
+                      <option value="">Não informado</option>
+                      <option value="acesso">Acesso</option>
+                      <option value="medio">Médio</option>
+                      <option value="premium">Premium</option>
+                      <option value="premium_luxo">Premium / Luxo</option>
+                    </select>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowUpgradePerfil(true)}
+                    className="flex items-center justify-between gap-3 border-[1.5px] border-dashed border-gray-200 rounded-xl px-4 py-3 text-left w-full hover:border-[#C8B840]/60 hover:bg-[#FFFBEB] transition-all group"
                   >
-                    <option value="">Não informado</option>
-                    <option value="acesso">Acesso</option>
-                    <option value="medio">Médio</option>
-                    <option value="premium">Premium</option>
-                    <option value="premium_luxo">Premium / Luxo</option>
-                  </select>
-                </div>
+                    <div>
+                      <div className="text-[13px] font-semibold text-gray-400 group-hover:text-[#4B3520] transition-colors">Perfil de marca</div>
+                      <div className="text-[11px] text-gray-300 mt-0.5">Calibre os benchmarks ao perfil da sua marca</div>
+                    </div>
+                    <span className="text-[13px] flex-shrink-0" style={{ color: '#C8B840' }}>🔒 Premium</span>
+                  </button>
+                )}
               </motion.div>
             )}
 
@@ -811,6 +851,7 @@ export default function FlowBScreen() {
                     fatVal={faturamento} setFatVal={setFaturamento}
                     pecasVal={pecas} setPecasVal={setPecas}
                     touched={touched2} fieldClass={fieldClass}
+                    isPremium={isPremium} onPremiumGate={() => setShowUpgradePecas(true)}
                   />
                 ) : (
                   <div className="flex flex-col gap-4">
@@ -824,6 +865,7 @@ export default function FlowBScreen() {
                           fatVal={faturamentoV} setFatVal={setFaturamentoV}
                           pecasVal={pecasV} setPecasVal={setPecasV}
                           touched={touched2} fieldClass={fieldClass}
+                          isPremium={isPremium} onPremiumGate={() => setShowUpgradePecas(true)}
                         />
                       </div>
                       <div className="bg-orange-50 rounded-xl p-4 border border-orange-100">
@@ -835,6 +877,7 @@ export default function FlowBScreen() {
                           fatVal={faturamentoA} setFatVal={setFaturamentoA}
                           pecasVal={pecasA} setPecasVal={setPecasA}
                           touched={touched2} fieldClass={fieldClass}
+                          isPremium={isPremium} onPremiumGate={() => setShowUpgradePecas(true)}
                         />
                       </div>
                     </div>

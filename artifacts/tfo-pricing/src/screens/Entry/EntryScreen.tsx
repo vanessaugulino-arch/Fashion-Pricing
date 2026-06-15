@@ -4,6 +4,8 @@ import { BarChart2, Store, Target, Tag } from 'lucide-react';
 
 export default function EntryScreen() {
   const setActiveFlow = useToolStore(s => s.setActiveFlow);
+  const isPremium = useToolStore(s => s.isPremium);
+  const setIsPremium = useToolStore(s => s.setIsPremium);
 
   return (
     <main
@@ -11,6 +13,19 @@ export default function EntryScreen() {
       style={{ background: 'linear-gradient(135deg, #E8EEF7 0%, #EDE9F4 40%, #F0E8EA 100%)' }}
     >
       <div className="max-w-[860px] mx-auto">
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setIsPremium(!isPremium)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-sans font-medium border transition-all"
+            style={isPremium
+              ? { background: '#F6F1AF', borderColor: '#C8B840', color: '#4B3520' }
+              : { background: 'white', borderColor: '#E5E7EB', color: '#9CA3AF' }}
+          >
+            <span>{isPremium ? '★' : '☆'}</span>
+            {isPremium ? 'Premium ativo' : 'Plano gratuito'}
+          </button>
+        </div>
+
         <h1 className="font-serif italic text-[28px] md:text-[36px] text-[#2F1B20] max-w-lg leading-tight">
           O que você quer descobrir agora?
         </h1>

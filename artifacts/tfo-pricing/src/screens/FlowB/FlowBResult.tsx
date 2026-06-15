@@ -295,14 +295,14 @@ export default function FlowBResult({ resultData, onBack, setActiveFlow }: Props
     }
   }
 
-  const sugestoesFinal = sugestoes.slice(0, 3);
+  const sugestoesFinal = sugestoes;
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="max-w-[860px] mx-auto px-4 py-8">
       <button onClick={onBack} className="text-[13px] font-sans text-gray-400 hover:text-[#2F1B20] transition-colors flex items-center gap-1 mb-4">
         ← Refazer simulação
       </button>
-      <h2 className="font-serif text-[22px] md:text-[26px] text-[#2F1B20] mb-1">Simulador de Impacto</h2>
+      <h2 className="font-serif text-[22px] md:text-[26px] text-[#2F1B20] mb-1">Análise de Precificação do Negócio</h2>
       <div className="flex flex-wrap gap-2 mb-8">
         <span className="text-[12px] font-sans bg-gray-100 text-gray-600 rounded-full px-3 py-1">{segmentoLabel}</span>
         <span className="text-[12px] font-sans bg-gray-100 text-gray-600 rounded-full px-3 py-1">{canalLabel}</span>
@@ -581,10 +581,10 @@ export default function FlowBResult({ resultData, onBack, setActiveFlow }: Props
         {/* ── CTAs ── */}
         <div className="flex flex-col gap-2">
           <button onClick={() => setActiveFlow('A')} className="w-full py-2.5 rounded-xl text-white text-[14px] font-sans font-medium transition-all hover:opacity-90" style={{ background: '#2F1B20' }}>
-            → Analisar um produto específico
+            → Diagnóstico de Margem
           </button>
           <button onClick={() => setActiveFlow('C')} className="w-full py-2.5 rounded-xl text-[14px] font-sans font-medium border border-[#7C9DD0] text-[#7C9DD0] hover:bg-[#F8FAFC] transition-all">
-            → Calcular o preço ideal
+            → Formação de Preço
           </button>
         </div>
 

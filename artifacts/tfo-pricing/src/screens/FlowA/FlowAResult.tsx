@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useToolStore } from '@/store/useToolStore';
 import StatusBadge from '@/components/ui/StatusBadge';
+import UpgradeModal from '@/components/ui/UpgradeModal';
 import { formatCurrency, formatPercent, formatMultiplier } from '@/engine/calculations';
 import { BENCHMARK_MARGEM_BRUTA, SEGMENTOS_FLOWA } from '@/engine/benchmarks';
 import { diagnosisFlowA } from '@/engine/diagnostics';
@@ -26,7 +27,7 @@ function fmtVal(n: number, decimals = 2): string {
 }
 
 export default function FlowAResult({ nomeProduto, precoInicial, custoInicial, icmsNum, segmento, canal, onBack, onReset }: Props) {
-  const { setActiveFlow, salvarProduto, mixPortfolio } = useToolStore();
+  const { setActiveFlow, salvarProduto, mixPortfolio, isPremium } = useToolStore();
   const perfilMarca = mixPortfolio.perfilMarca;
 
   const benchEntry = (BENCHMARK_MARGEM_BRUTA[segmento] ?? BENCHMARK_MARGEM_BRUTA['default']) as Record<string, [number, number]>;
@@ -69,6 +70,7 @@ export default function FlowAResult({ nomeProduto, precoInicial, custoInicial, i
   const [flashKey, setFlashKey] = useState(0);
   const [showFlowC, setShowFlowC] = useState(false);
   const [savedFeedback, setSavedFeedback] = useState(false);
+  const [showUpgrade, setShowUpgrade] = useState(false);
 
   const precoNum = parseFloat(simPreco) || 0;
   const custoNum = parseFloat(simCusto) || 0;
@@ -447,14 +449,20 @@ export default function FlowAResult({ nomeProduto, precoInicial, custoInicial, i
       </div>
 
       {/* ─── BLOCO 3 — CTAs ─── */}
+      {showUpgrade && (
+        <UpgradeModal
+          feature="salvar_produto"
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
       <div className="flex flex-col gap-3 mt-6">
         <button
-          onClick={handleSalvar}
+          onClick={isPremium ? handleSalvar : () => setShowUpgrade(true)}
           disabled={savedFeedback}
-          className="w-full py-3 rounded-xl text-white font-sans font-medium text-[15px] transition-all disabled:opacity-70"
+          className="w-full py-3 rounded-xl text-white font-sans font-medium text-[15px] transition-all disabled:opacity-70 flex items-center justify-center gap-2"
           style={{ background: '#2F1B20' }}
         >
-          {savedFeedback ? '✓ Produto salvo! Voltando…' : '💾 Salvar produto'}
+          {savedFeedback ? '✓ Produto salvo! Voltando…' : isPremium ? '💾 Salvar produto' : '🔒 Salvar produto'}
         </button>
 
         <button
@@ -469,7 +477,7 @@ export default function FlowAResult({ nomeProduto, precoInicial, custoInicial, i
             onClick={() => setShowFlowC(true)}
             className="w-full py-3 rounded-xl border-[1.5px] border-[#7C9DD0] text-[#7C9DD0] font-sans font-medium text-[15px] hover:bg-[#EEF3FA] transition-all"
           >
-            → Descobrir o preço ideal
+            → Formação de Preço
           </button>
         )}
 
