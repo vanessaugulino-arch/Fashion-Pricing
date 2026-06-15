@@ -1,3 +1,1 @@
-{
-  "buildCommand": "cd $(git rev-parse --show-toplevel) && bash scripts/vercel-build.sh"
-}
+{}
